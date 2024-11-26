@@ -1,11 +1,9 @@
 import React, { useState, useContext } from 'react';
 import { TextField, Button, Box, Typography, MenuItem, Link, Container, Grid } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
-import { AuthContext } from '../../AuthProvider';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 const Signup = () => {
-	const { currentUser, isUserLoggedIn } = useContext(AuthContext);
-	console.log(1111111, 2222, currentUser, isUserLoggedIn)
+	const navigate = useNavigate();
 	const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,9 +17,10 @@ const Signup = () => {
 
   const handleSignup = async () => {
     try {
-			const response = await window.apiClient.post('signup', formData);
-			alert('Signup successful!');
-			console.log(1111, response)
+			const result = await window.apiClient.post('signup', formData);
+			if(result.status === 201) {
+				navigate('/login');
+      }
     } catch (error) {
       console.error('Signup failed', error);
     }

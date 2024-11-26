@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ProductItem from './../../components/products/Product';
+import { useDispatch } from 'react-redux';
+import {clear} from './../../slices/cartSlice';
 import {
   Box,
-  Card,
-  CardMedia,
   Typography,
   Button,
 	Grid
 } from '@mui/material';
 
 const List = () => {
+  const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,6 +38,7 @@ const List = () => {
     try {
       const result = await window.apiClient.post('purchage');
       if(result.status === 201) {
+        dispatch(clear());
         navigate('/products');
       }
     } catch (error) {
@@ -56,64 +59,10 @@ const List = () => {
       </Box>
 
       <Grid container spacing={2}>
-        {products.length > 0 ? (
+        {products.length > 0 &&
           products.map((product) => (
-            <Grid item xs={12} key={product._id}>
-              {/* Row layout for each cart item */}
-              <Card sx={{ display: 'flex', alignItems: 'center', padding: 2 }}>
-                {/* Left: Image */}
-                <CardMedia
-                  component="img"
-                  image={'https://via.placeholder.com/150'}
-                  alt={product.title}
-                  sx={{
-                    width: 150,
-                    height: 150,
-                    borderRadius: 1,
-                    marginRight: 2,
-                  }}
-                />
-
-                {/* Right: Details and Button */}
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    flexGrow: 1,
-                  }}
-                >
-                  {/* Product Details */}
-                  <Box>
-                    <Typography variant="h6" gutterBottom>
-                      {product.title}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary" gutterBottom>
-                      {product.description}
-                    </Typography>
-                    <Typography>${product.price.$numberDecimal}</Typography>
-                    <Typography>Quantity: {product.quantity}</Typography>
-                  </Box>
-
-                  {/* Remove Button */}
-                  <Button
-                    variant="contained"
-                    color="error"
-                    size="small"
-                    onClick={() => navigate(`/products/${product._id}`)}
-                    sx={{ marginLeft: 2 }}
-                  >
-                    Remove from Cart
-                  </Button>
-                </Box>
-              </Card>
-            </Grid>
-          ))
-        ) : (
-          <Typography variant="h6" textAlign="center" sx={{ width: '100%', marginTop: 4 }}>
-            Your cart is empty.
-          </Typography>
-        )}
+            <ProductItem product={product} listing={true} key={product._id}/>
+          ))}
       </Grid>
 
       {/* Purchase Items Button */}

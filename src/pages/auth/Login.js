@@ -13,11 +13,11 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-			const response = await window.apiClient.post('login', { email, password })
-			if(response.data) {
-				dispatch(login(response.data))
-				navigate('/login');
-			}
+			const result = await window.apiClient.post('login', { email, password })
+			if(result.status === 201) {
+        dispatch(login(result.data))
+				navigate('/');
+      }
     } catch (error) {
       console.error('Login failed', error);
     }
