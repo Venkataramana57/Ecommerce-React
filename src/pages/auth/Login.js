@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { TextField, Button, Box, Typography, Link, Container, Grid } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login } from './../../slices/authSlice';
+import {AlertContext} from './../../AlertProvider';
 
 const Login = () => {
+	const openSnackbar = useContext(AlertContext);
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
@@ -12,14 +14,22 @@ const Login = () => {
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
+		if(!email.length || !password.length) {
+			openSnackbar('Please enter email and password', 'error');
+			return;
+		}
     try {
-			const result = await window.apiClient.post('login', { email, password })
-			if(result.status === 201) {
+			const result = await window.apiClient.post('login', { email, password });
+			if(result.status === 201 && !result.data.error) {
         dispatch(login(result.data))
+				openSnackbar('Login successful!', 'success');
 				navigate('/');
-      }
+      } else {
+				openSnackbar('Invalid credentials', 'error');
+			}
     } catch (error) {
-      console.error('Login failed', error);
+      const errMsg = error.response && error.response.data && error.response.data.message;
+      openSnackbar(errMsg, 'error');
     }
   };
 
@@ -60,11 +70,6 @@ const Login = () => {
 				</Button>
 
 				<Grid container>
-					<Grid item xs>
-						<Link component={RouterLink} to="/signup" variant="body2">
-							Forgot Password?
-						</Link>
-					</Grid>
 					<Grid item>
 						<Link component={RouterLink} to="/signup" variant="body2">
 							{"Don't have an account? Sign Up"}

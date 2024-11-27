@@ -1,8 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { TextField, Button, Box, Typography, MenuItem, Link, Container, Grid } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import {AlertContext} from './../../AlertProvider';
 
 const Signup = () => {
+	const openSnackbar = useContext(AlertContext);
 	const navigate = useNavigate();
 	const [formData, setFormData] = useState({
     name: '',
@@ -15,14 +17,30 @@ const Signup = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+	const setValidation = () => {
+		let isValid = true;
+		if(!formData.name || !formData.email || !formData.password || !formData.role) {
+			isValid = false;
+			openSnackbar('All fields required!', 'error');
+		}
+		return isValid;
+	}
+
   const handleSignup = async () => {
+		const isFormValid = setValidation();
+		if(!isFormValid) return;
+
     try {
 			const result = await window.apiClient.post('signup', formData);
-			if(result.status === 201) {
+			if(result.status === 201 && !result.data.error) {
+				openSnackbar('Login successful!', 'success');
 				navigate('/login');
-      }
+      } else {
+				openSnackbar('Login successful!', 'error');
+			}
     } catch (error) {
-      console.error('Signup failed', error);
+			const errMsg = error.response && error.response.data && error.response.data.message;
+      openSnackbar(errMsg, 'error');
     }
   };
 

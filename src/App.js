@@ -4,6 +4,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import AppRoutes from './routes';
 import store, {persistor} from './store';
 import AuthProvider from './AuthProvider';
+import AlertProvider from './AlertProvider';
 import TopNav from './components/TopNav';
 import { BrowserRouter as Router } from 'react-router-dom';
 
@@ -12,10 +13,12 @@ const App = () => {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <AuthProvider>
-          <Router>
-            <TopNav />        
-            <AppRoutes />
-          </Router>
+          <AlertProvider>
+            <Router>
+              <TopNav />        
+              <AppRoutes />
+            </Router>
+            </AlertProvider>
         </AuthProvider>
       </PersistGate>
     </Provider>

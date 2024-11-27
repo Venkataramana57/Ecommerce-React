@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container, TextField, Button, Box, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import {AlertContext} from './../../AlertProvider';
 
 const Form = ({ product=null, handleSubmit, resetEditable }) => {
   const navigate = useNavigate();
+  const openSnackbar = useContext(AlertContext);
   const [formData, setFormData] = useState(
     { title: '', description: '', image: '', price: '', quantity: '' }
   );
@@ -20,7 +22,35 @@ const Form = ({ product=null, handleSubmit, resetEditable }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const setValidation = () => {
+		let isValid = true;
+		if(!formData.title) {
+			isValid = false;
+			openSnackbar('Title is required', 'error');
+      return;
+		}
+    if(!formData.description) {
+			isValid = false;
+			openSnackbar('Description is required', 'error');
+      return;
+    }
+    if(!formData.price) {
+			isValid = false;
+			openSnackbar('Price is required', 'error');
+      return;
+    }
+    if(!formData.quantity || formData.quantity > 20) {
+			isValid = false;
+			openSnackbar('Quantity is required and max quantity should be 20', 'error');
+      return;
+    }
+		return isValid;
+	}
+
   const submitForm = async () => {
+    const isFormValid = setValidation();
+		if(!isFormValid) return;
+
     handleSubmit(formData);
   };
 

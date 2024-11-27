@@ -1,14 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import { Container, Box, Typography } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
+import {AlertContext} from './../../AlertProvider';
 import Form from './Form';
-import ProductItem from './../../components/products/Product'
+import ProductItem from './../../components/products/Product';
 
 const Details = () => {
   const navigate = useNavigate();
   const productId = useParams().id;
   const [product, setProduct] = useState(null);
   const [editable, setEditable] = useState(false);
+  const openSnackbar = useContext(AlertContext);
 
   const fetchProductById = useCallback(async (productId) => {
     try {
@@ -17,11 +19,12 @@ const Details = () => {
         setProduct(result.data);
         setEditable(false);
       } else {
+        openSnackbar('Product is not available or something went wrong', 'error');
         navigate('/products')
       }
     }
     catch (error) {
-      console.log(error);
+      openSnackbar(error.message, 'error');
     }
   }, [navigate])
 
@@ -30,10 +33,13 @@ const Details = () => {
     try {
       const result = await window.apiClient.delete(`/products/${productId}`)
       if(result.status === 201) {
+        openSnackbar('Product deleted successfully', 'success');
         navigate('/products');
+      } else {
+        openSnackbar('Error deleting product', 'error');
       }
     } catch (error) {
-      console.log(error)
+      openSnackbar(error.message, 'error');
     }
   }
 
@@ -41,10 +47,13 @@ const Details = () => {
     try {
       const result = await window.apiClient.patch(`/products/${productId}`, formData);
       if(result.status === 201) {
+        openSnackbar('Product updated successfully', 'success');
         fetchProductById(productId);
+      } else {
+        openSnackbar('Error updating product', 'error');
       }
     } catch (error) {
-      console.log(error);
+      openSnackbar(error.message, 'error');;
     }
   }
 

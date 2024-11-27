@@ -15,7 +15,7 @@ import {
 
 const TopNav = () => {
   const navigate = useNavigate();
-  const { currentUser, isUserLoggedIn, logOut } = useContext(AuthContext);
+  const { currentUser, isUserLoggedIn, isRetailer, logOut } = useContext(AuthContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const profileLable = isUserLoggedIn ? `${currentUser.name} as ${currentUser.role}` : '';
 
@@ -38,7 +38,7 @@ const TopNav = () => {
         <Typography onClick={() => navigate('/')} variant="h6" component="div" sx={{ flexGrow: 1 }}>
           My eCommerce Store
         </Typography>
-        <Button color="inherit" onClick={() => navigate('/cart')}>Cart</Button>
+        {isUserLoggedIn && !isRetailer && <Button color="inherit" onClick={() => navigate('/cart')}>Cart</Button>}
         {!isUserLoggedIn && <Button color="inherit" onClick={() => navigate('/login')}>Login</Button>}
         {isUserLoggedIn && (
           <>

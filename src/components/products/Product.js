@@ -1,6 +1,8 @@
 import {useState, useContext, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../AuthProvider';
+import { AuthContext } from './../../AuthProvider';
+import {AlertContext} from './../../AlertProvider';
+
 import { useDispatch, useSelector } from 'react-redux';
 import {add, remove} from './../../slices/cartSlice';
 import {
@@ -17,6 +19,7 @@ const Product = ({product, listing, setEditableForm, deleteProduct}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {isUserLoggedIn, isRetailer} = useContext(AuthContext);
+  const openSnackbar = useContext(AlertContext);
   const cartItems = useSelector((state) => state.cart && state.cart.items);
   const [itemAddedToCart, setItemAddedToCart] = useState(false);
 
@@ -34,10 +37,16 @@ const Product = ({product, listing, setEditableForm, deleteProduct}) => {
       const url = itemAddedToCart ? 'remove_cart' : 'add_cart';
       const result = await window.apiClient.post(`${url}/${product._id}`);
       if(result.status === 201) {
-        itemAddedToCart ? dispatch(remove(product._id)) : dispatch(add(product._id));
+        if(itemAddedToCart) {
+          dispatch(remove(product._id))
+          openSnackbar('Item removed from cart.', 'success');
+        } else {
+          openSnackbar('Item added to cart.', 'success');
+          dispatch(add(product._id));
+        }
       }
     } catch (error) {
-      console.log(error);
+      openSnackbar(error.message, 'success');
     }
   }
 
