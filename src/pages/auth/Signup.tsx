@@ -1,23 +1,30 @@
 import React, { useState, useContext } from 'react';
 import { TextField, Button, Box, Typography, MenuItem, Link, Container, Grid } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import {AlertContext} from './../../AlertProvider';
+import {AlertContext} from '../../AlertProvider';
 
-const Signup = () => {
+const Signup: React.FC = () => {
+	interface Form {
+		name: string,
+		email: string,
+		password: string,
+		role: string
+	}
+
 	const openSnackbar = useContext(AlertContext);
 	const navigate = useNavigate();
-	const [formData, setFormData] = useState({
+	const [formData, setFormData] = useState<Form>({
     name: '',
     email: '',
     password: '',
     role: '',
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-	const setValidation = () => {
+	const setValidation = (): boolean => {
 		let isValid = true;
 		if(!formData.name || !formData.email || !formData.password || !formData.role) {
 			isValid = false;
@@ -26,7 +33,7 @@ const Signup = () => {
 		return isValid;
 	}
 
-  const handleSignup = async () => {
+  const handleSignup = async (): Promise<void> => {
 		const isFormValid = setValidation();
 		if(!isFormValid) return;
 
@@ -38,7 +45,7 @@ const Signup = () => {
       } else {
 				openSnackbar('Login successful!', 'error');
 			}
-    } catch (error) {
+    } catch (error: any) {
 			const errMsg = error.response && error.response.data && error.response.data.message;
       openSnackbar(errMsg, 'error');
     }
