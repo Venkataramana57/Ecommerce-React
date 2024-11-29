@@ -1,8 +1,8 @@
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../AuthProvider';
-import { AlertContext } from '../../AlertProvider';
-
+import { AuthContext } from '../../providers/AuthProvider';
+import { AlertContext } from '../../providers/AlertProvider';
+import {Product as ProductIF} from './../../interfaces/Product';
 import { useDispatch, useSelector } from 'react-redux';
 import { add, remove } from '../../slices/cartSlice';
 import {
@@ -15,20 +15,9 @@ import {
   Grid,
 } from '@mui/material';
 
-// Define types for props
-interface Product {
-  _id: string;
-  title: string;
-  description?: string;
-  price: {
-    $numberDecimal: string;
-  };
-  quantity: number;
-}
-
 interface ProductProps {
-  product: Product;
-  listing: boolean;
+  product: ProductIF;
+  listing?: boolean;
   setEditableForm?: () => void;
   deleteProduct?: () => void;
 }

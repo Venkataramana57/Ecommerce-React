@@ -1,30 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, TextField, Button, Box, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { AlertContext } from '../../AlertProvider';
-
-// Define types for props
-interface Product {
-  title: string;
-  description: string;
-  image?: string;
-  price: string;
-  quantity: number;
-}
+import { AlertContext } from '../../providers/AlertProvider';
+import {Product, FormData} from './../../interfaces/Product';
 
 interface FormProps {
-  product?: Product | null; // Optional product prop
-  handleSubmit: (formData: Product) => void;
-  resetEditable: () => void;
-}
-
-// Define types for form data
-interface FormData {
-  title: string;
-  description: string;
-  image: string;
-  price: string;
-  quantity: string;
+  product?: Product | null;
+  handleSubmit: (formData: FormData) => void;
+  resetEditable?: () => void; 
 }
 
 const Form: React.FC<FormProps> = ({ product = null, handleSubmit, resetEditable }) => {
@@ -35,7 +18,7 @@ const Form: React.FC<FormProps> = ({ product = null, handleSubmit, resetEditable
     description: '',
     image: '',
     price: '',
-    quantity: '',
+    quantity: 0,
   });
 
   useEffect(() => {
@@ -44,8 +27,8 @@ const Form: React.FC<FormProps> = ({ product = null, handleSubmit, resetEditable
         title: product.title,
         description: product.description,
         image: '',
-        price: product.price,
-        quantity: product.quantity.toString(),
+        price: product.price.$numberDecimal,
+        quantity: product.quantity,
       });
     }
   }, [product]);
@@ -83,19 +66,18 @@ const Form: React.FC<FormProps> = ({ product = null, handleSubmit, resetEditable
     const isFormValid = setValidation();
     if (!isFormValid) return;
 
-    const parsedData: Product = {
+    const parsedData: FormData = {
       title: formData.title,
       description: formData.description,
       image: formData.image,
       price: formData.price,
       quantity: Number(formData.quantity),
     };
-
     handleSubmit(parsedData);
   };
 
   const handleNavigation = () => {
-    product ? resetEditable() : navigate('/products');
+    product ? resetEditable?.() : navigate('/products');
   };
 
   return (

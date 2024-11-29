@@ -1,23 +1,23 @@
 import React, { useState, useContext } from 'react';
 import { TextField, Button, Box, Typography, MenuItem, Link, Container, Grid } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import {AlertContext} from '../../AlertProvider';
+import {AlertContext} from '../../providers/AlertProvider';
+
+interface Form {
+	name: string,
+	email: string,
+	password: string,
+	role: string
+}
 
 const Signup: React.FC = () => {
-	interface Form {
-		name: string,
-		email: string,
-		password: string,
-		role: string
-	}
-
-	const openSnackbar = useContext(AlertContext);
+	const openSnackbar = useContext(AlertContext) as (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void;
 	const navigate = useNavigate();
 	const [formData, setFormData] = useState<Form>({
     name: '',
     email: '',
     password: '',
-    role: '',
+    role: '',	
   });
 
   const handleChange = (e: any) => {

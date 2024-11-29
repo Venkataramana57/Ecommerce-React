@@ -1,15 +1,15 @@
 import { useContext, useEffect } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import {AlertContext} from './../AlertProvider';
+import {AlertContext} from '../providers/AlertProvider';
 
-const NoPage = () => {
+const NoPage: React.FC = () => {
   const navigate = useNavigate();
-  const openSnackbar = useContext(AlertContext);
+  const openSnackbar = useContext(AlertContext) as (message: string, severity: 'error') => void;
 
   useEffect(() => {
     openSnackbar('Page not found!', 'error');
-  }, []);
+  }, [openSnackbar]);
 
   return (
     <Box

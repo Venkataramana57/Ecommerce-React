@@ -1,20 +1,30 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { TextField, Button, Box, Typography, Link, Container, Grid } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login } from '../../slices/authSlice';
-import { AlertContext } from '../../AlertProvider';
+import { AlertContext } from '../../providers/AlertProvider';
+import { AuthContext } from '../../providers/AuthProvider';
 
 const Login: React.FC = () => {
-  const openSnackbar = useContext(AlertContext);
+  const openSnackbar = useContext(AlertContext) as (massage: string, severity: 'success' | 'error' | 'warning') => void;
+  const {isUserLoggedIn} = useContext(AuthContext) as {isUserLoggedIn: boolean};
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // State variables with types
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if(isUserLoggedIn) {
+        openSnackbar('Your session is already active!', 'warning');
+        navigate('/');
+      }
+    }, 200)
+    return () => clearTimeout(timer); 
+  }, [isUserLoggedIn, openSnackbar, navigate])
+
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
-  // Handle Login function
   const handleLogin = async (): Promise<void> => {
     if (!email.length || !password.length) {
       openSnackbar('Please enter email and password', 'error');

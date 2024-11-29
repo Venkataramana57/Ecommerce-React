@@ -1,6 +1,6 @@
 import React, { useState, createContext, useEffect, ReactNode } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from './slices/authSlice';
+import { logout } from '../slices/authSlice';
 import { Snackbar, Alert } from '@mui/material';
 
 // Define the type for the snackbar state

@@ -1,24 +1,10 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Container, Box, Typography } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
-import { AlertContext } from './../../AlertProvider';
+import { AlertContext } from '../../providers/AlertProvider';
 import Form from './Form';
 import ProductItem from './../../components/products/Product';
-
-interface Product {
-  _id: string;
-  title: string;
-  description: string;
-  price: number,
-  quantity: number;
-}
-
-interface FormData {
-  title: string;
-  description: string;
-  price: number,
-  quantity: number;
-}
+import {Product, FormData} from './../../interfaces/Product';
 
 const Details: React.FC = () => {
   const navigate = useNavigate();
@@ -32,8 +18,8 @@ const Details: React.FC = () => {
       try {
         const result = await window.apiClient(`/products/${productId}`);
         if (result.status === 200 && result.data._id) {
-          setProduct(result.data);
-          setEditable(false);
+          setProduct(result.data as Product);
+          setEditable(false as boolean);
         } else {
           openSnackbar('Product is not available or something went wrong', 'error');
           navigate('/products');
@@ -45,8 +31,7 @@ const Details: React.FC = () => {
     [navigate, openSnackbar]
   );
 
-  const deleteProduct = async (e: any): Promise<void> => {
-    e.preventDefault();
+  const deleteProduct = async (): Promise<void> => {
     try {
       const result = await window.apiClient.delete(`/products/${productId}`);
       if (result.status === 201) {

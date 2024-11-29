@@ -5,12 +5,13 @@ import Signup from './pages/auth/Signup';
 import Login from './pages/auth/Login';
 import ProductList from './pages/products/List';
 import CreateProduct from './pages/products/Create';
-import ProductDetails from './pages/products/Details'
-import Cart from './pages/orders/Cart'
+import ProductDetails from './pages/products/Details';
+import Cart from './pages/orders/Cart';
 
-const AppRoutes = () => (
+// Define the type for the component
+const AppRoutes: React.FC = () => (
   <Routes>
-    <Route path="/" element={<ProductList />}/>
+    <Route path="/" element={<ProductList />} />
     <Route path="/signup" element={<Signup />} />
     <Route path="/login" element={<Login />} />
     <Route path="/products" element={<ProductList />} />

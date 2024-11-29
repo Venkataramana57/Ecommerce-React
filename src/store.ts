@@ -1,5 +1,5 @@
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import { persistStore, persistReducer } from 'redux-persist';
+import { configureStore, combineReducers, EnhancedStore } from '@reduxjs/toolkit';
+import { persistStore, persistReducer, Persistor } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import authReducer from './slices/authSlice';
 import cartReducer from './slices/cartSlice';
@@ -18,10 +18,10 @@ const persistConfig = {
 // Create a persisted reducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-const store = configureStore({
+const store: EnhancedStore = configureStore({
   reducer: persistedReducer
 });
 
 // Create the persistor for redux-persist
-export const persistor = persistStore(store);
+export const persistor: Persistor = persistStore(store);
 export default store;

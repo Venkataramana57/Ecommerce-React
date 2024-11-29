@@ -1,8 +1,8 @@
-import React, { useState, createContext, ReactNode } from 'react';
-import { Snackbar, Alert, AlertColor } from '@mui/material';
+import React, { useState, createContext, ReactNode, useCallback } from 'react';
+import { Snackbar, Alert } from '@mui/material';
 
 // Define the context type
-type AlertContextType = (message: string, severity?: AlertColor) => void;
+type AlertContextType = (message: string, severity?: 'success' | 'info' | 'error' | 'warning') => void;
 
 // Create the context with a default value
 export const AlertContext = createContext<AlertContextType>(() => {});
@@ -12,11 +12,10 @@ interface AlertProviderProps {
   children: ReactNode;
 }
 
-// Define the snackbar state type
 interface SnackbarState {
   open: boolean;
   message: string;
-  severity: AlertColor;
+  severity: 'success' | 'info' | 'error' | 'warning';
 }
 
 const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
@@ -26,9 +25,9 @@ const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
     severity: 'info',
   });
 
-  const openSnackbar: AlertContextType = (message, severity = 'info') => {
+  const openSnackbar: AlertContextType = useCallback((message, severity = 'info') => {
     setSnackbar({ open: true, message, severity });
-  };
+  }, []);
 
   const closeSnackbar = () => {
     setSnackbar((prevState) => ({ ...prevState, open: false }));

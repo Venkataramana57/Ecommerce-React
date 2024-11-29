@@ -1,8 +1,9 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProductItem from './../../components/products/Product';
-import { AuthContext } from './../../AuthProvider';
-import { AlertContext } from '../../AlertProvider';
+import { AuthContext } from '../../providers/AuthProvider';
+import { AlertContext } from '../../providers/AlertProvider';
+import {Product} from './../../interfaces/Product';
 
 import {
   Typography,
@@ -12,17 +13,6 @@ import {
   Container,
 } from '@mui/material';
 
-// Define the type for a product
-interface Product {
-  _id: string;
-  title: string;
-  description?: string;
-  price: {
-    $numberDecimal: string;
-  };
-  quantity: number;
-}
-
 const HomePage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -31,7 +21,7 @@ const HomePage: React.FC = () => {
   const { isRetailer } = useContext(AuthContext) as { isRetailer: boolean };
   const openSnackbar = useContext(AlertContext) as (
     message: string,
-    severity: "success" | "info" | "warning" | "error"
+    severity: 'success' | 'info' | 'warning' | 'error'
   ) => void;
 
   const getProducts = async () => {

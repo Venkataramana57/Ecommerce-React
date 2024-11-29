@@ -1,12 +1,18 @@
 import { useEffect, useContext } from 'react';
 import Form from './Form';
 import {useNavigate} from 'react-router-dom';
-import { AuthContext } from './../../AuthProvider';
-import {AlertContext} from './../../AlertProvider';
+import { AuthContext } from '../../providers/AuthProvider';
+import {AlertContext} from '../../providers/AlertProvider';
+import {FormData} from './../../interfaces/Product';
 
-const Create = () => {
+interface LoginCheck {
+  isUserLoggedIn: boolean,
+  isRetailer: boolean
+}
+
+const Create: React.FC = () => {
   const navigate = useNavigate();
-  const {isUserLoggedIn, isRetailer} = useContext(AuthContext);
+  const {isUserLoggedIn, isRetailer} = useContext(AuthContext) as LoginCheck;
   const openSnackbar = useContext(AlertContext);
 
   useEffect(() => {
@@ -20,8 +26,7 @@ const Create = () => {
     return () => clearTimeout(timer);    
   }, [isUserLoggedIn, isRetailer, navigate, openSnackbar])
 
-  const handleCreate = async (formData) => {
-    console.log('Form Data:', formData);
+  const handleCreate = async (formData: FormData): Promise<void> => {
     try {
       const result = await window.apiClient.post('/products', formData);
       if(result.status === 201) {
@@ -30,13 +35,13 @@ const Create = () => {
       } else {
         openSnackbar('Error creating a product', 'error');
       }
-    } catch (error) {
+    } catch (error: any) {
       const errMsg = error.response && error.response.data && error.response.data.message;
       openSnackbar(errMsg, 'error');
     }
   };
 
-  return <Form handleSubmit={handleCreate} />;
+  return <Form handleSubmit={handleCreate}/>;
 }
 
 export default Create;
