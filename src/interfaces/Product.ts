@@ -1,17 +1,18 @@
 export interface Product {
-  _id: string;
-  title: string;
-  description: string;
+  _id: string,
+  title: string,
+  description: string,
   price: {
-    $numberDecimal: string;
+    $numberDecimal: string,
   };
-  quantity: number;
+  quantity: number,
+  images: string[]
 }
 
 export interface FormData {
-  title: string;
-  description: string;
-  image?: string;
+  title: string,
+  description: string,
   price: string,
-  quantity: number;
+  quantity: number,
+  images: File[]
 }

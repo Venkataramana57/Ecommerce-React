@@ -16,6 +16,7 @@ apiClient.interceptors.request.use(
 
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
+      config.headers['Content-Type'] = 'multipart/form-data';
     }
 
     return config;

@@ -5,6 +5,7 @@ import { AlertContext } from '../../providers/AlertProvider';
 import {Product as ProductIF} from './../../interfaces/Product';
 import { useDispatch, useSelector } from 'react-redux';
 import { add, remove } from '../../slices/cartSlice';
+import Carousel from "react-material-ui-carousel";
 import {
   Typography,
   Box,
@@ -13,6 +14,7 @@ import {
   CardContent,
   Button,
   Grid,
+  Paper
 } from '@mui/material';
 
 interface ProductProps {
@@ -43,6 +45,7 @@ const Product: React.FC<ProductProps> = ({
   const openSnackbar = useContext(AlertContext) as (message: string, severity: string) => void;
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const [itemAddedToCart, setItemAddedToCart] = useState(false);
+  const primeImage = product.images.length ? `http://localhost:5000${product.images[0]}` : 'https://via.placeholder.com/150';
 
   useEffect(() => {
     setItemAddedToCart(cartItems.includes(product._id));
@@ -74,13 +77,28 @@ const Product: React.FC<ProductProps> = ({
   return (
     <Grid item xs={12} sm={6} md={4}>
       <Card sx={{ maxWidth: 800 }}>
-        <CardMedia
+        {!listing && product.images.length > 0 && <Carousel animation="slide"
+          autoPlay={true}
+          interval={3000}
+          navButtonsAlwaysVisible>
+          {product.images.map((img, index) => (
+            <Paper key={index} elevation={3} style={{ padding: 20 }}>
+              <img
+                src={img}
+                alt={img}
+                style={{ width: "100%", height: "auto", borderRadius: "8px" }}
+              />
+            </Paper>
+          ))}
+        </Carousel>}
+
+        {(listing || !product.images.length) && <CardMedia
           component="img"
           alt={product.title}
           height="300"
-          image={'https://via.placeholder.com/150'}
+          image={primeImage}
           sx={{ borderRadius: 1 }}
-        />
+        />}
         <CardContent>
           <Typography variant="h4" gutterBottom>
             {product.title}

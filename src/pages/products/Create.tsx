@@ -3,7 +3,6 @@ import Form from './Form';
 import {useNavigate} from 'react-router-dom';
 import { AuthContext } from '../../providers/AuthProvider';
 import {AlertContext} from '../../providers/AlertProvider';
-import {FormData} from './../../interfaces/Product';
 
 interface LoginCheck {
   isUserLoggedIn: boolean,
@@ -26,7 +25,9 @@ const Create: React.FC = () => {
     return () => clearTimeout(timer);    
   }, [isUserLoggedIn, isRetailer, navigate, openSnackbar])
 
-  const handleCreate = async (formData: FormData): Promise<void> => {
+  const handleCreate = async (formData: any): Promise<void> => {
+    console.log(22222, formData)
+    
     try {
       const result = await window.apiClient.post('/products', formData);
       if(result.status === 201) {

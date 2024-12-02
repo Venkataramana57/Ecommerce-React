@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { AlertContext } from '../../providers/AlertProvider';
 import Form from './Form';
 import ProductItem from './../../components/products/Product';
-import {Product, FormData} from './../../interfaces/Product';
+import {Product} from './../../interfaces/Product';
 
 const Details: React.FC = () => {
   const navigate = useNavigate();
@@ -45,7 +45,7 @@ const Details: React.FC = () => {
     }
   };
 
-  const updateProduct = async (formData: FormData) => {
+  const updateProduct = async (formData: any) => {
     try {
       const result = await window.apiClient.patch(`/products/${productId}`, formData);
       if (result.status === 201) {

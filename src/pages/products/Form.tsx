@@ -2,23 +2,23 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Container, TextField, Button, Box, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { AlertContext } from '../../providers/AlertProvider';
-import {Product, FormData} from './../../interfaces/Product';
+import { Product, FormData as FD } from './../../interfaces/Product';
 
 interface FormProps {
   product?: Product | null;
   handleSubmit: (formData: FormData) => void;
-  resetEditable?: () => void; 
+  resetEditable?: () => void;
 }
 
 const Form: React.FC<FormProps> = ({ product = null, handleSubmit, resetEditable }) => {
   const navigate = useNavigate();
   const openSnackbar = useContext(AlertContext);
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<FD>({
     title: '',
     description: '',
-    image: '',
     price: '',
     quantity: 0,
+    images: []
   });
 
   useEffect(() => {
@@ -26,15 +26,24 @@ const Form: React.FC<FormProps> = ({ product = null, handleSubmit, resetEditable
       setFormData({
         title: product.title,
         description: product.description,
-        image: '',
         price: product.price.$numberDecimal,
         quantity: product.quantity,
+        images: []  // Keep images empty for a new product or handle them for existing products
       });
     }
   }, [product]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const fileArray = Array.from(files);
+      setFormData((prevState) => ({ ...prevState, images: fileArray }));
+    }
   };
 
   const setValidation = (): boolean => {
@@ -66,14 +75,17 @@ const Form: React.FC<FormProps> = ({ product = null, handleSubmit, resetEditable
     const isFormValid = setValidation();
     if (!isFormValid) return;
 
-    const parsedData: FormData = {
-      title: formData.title,
-      description: formData.description,
-      image: formData.image,
-      price: formData.price,
-      quantity: Number(formData.quantity),
-    };
-    handleSubmit(parsedData);
+    const form = new FormData()
+    form.append('title', formData.title);
+    form.append('description', formData.description);
+    form.append('price', String(formData.price));
+    form.append('quantity', String(formData.quantity));
+
+    formData.images.forEach(image => {
+      form.append('images', image);
+    })
+
+    handleSubmit(form);
   };
 
   const handleNavigation = () => {
@@ -98,16 +110,9 @@ const Form: React.FC<FormProps> = ({ product = null, handleSubmit, resetEditable
           label="Description"
           name="description"
           fullWidth
+          multiline
           margin="normal"
           value={formData.description}
-          onChange={handleChange}
-        />
-        <TextField
-          label="Image URL"
-          name="image"
-          fullWidth
-          margin="normal"
-          value={formData.image}
           onChange={handleChange}
         />
         <TextField
@@ -129,8 +134,40 @@ const Form: React.FC<FormProps> = ({ product = null, handleSubmit, resetEditable
           onChange={handleChange}
         />
 
+        {/* File input for uploading images */}
+        <input
+          accept="image/*"
+          id="image-upload"
+          type="file"
+          multiple
+          style={{ display: 'none' }}
+          onChange={handleImageChange}
+        />
+        <label htmlFor="image-upload">
+          <Button variant="outlined" component="span" sx={{ mt: 2 }}>
+            Upload Images
+          </Button>
+        </label>
+
+        {formData.images.length > 0 && (
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="subtitle1">Selected Images:</Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+              {formData.images.map((file: any, index) => (
+                <Box key={index} sx={{ marginRight: 2, marginBottom: 2 }}>
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={`preview-${index}`}
+                    style={{ width: 100, height: 100, objectFit: 'cover' }}
+                  />
+                </Box>
+              ))}
+            </Box>
+          </Box>
+        )}
+
         <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
-          <Button variant="outlined" onClick={() => handleNavigation()}>
+          <Button variant="outlined" onClick={handleNavigation}>
             Cancel
           </Button>
           <Button variant="contained" color="primary" onClick={submitForm}>

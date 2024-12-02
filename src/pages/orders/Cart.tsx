@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { clear } from '../../slices/cartSlice';
 import { AlertContext } from '../../providers/AlertProvider';
 import { AuthContext } from '../../providers/AuthProvider';
+import { Product } from '../../interfaces/Product';
 
 import {
   Box,
@@ -21,17 +22,6 @@ import {
 interface LoginCheck {
   isUserLoggedIn: boolean;
   isRetailer: boolean;
-}
-
-interface Product {
-  _id: string;
-  title: string;
-  description: string;
-  image: string;
-  price: {
-    $numberDecimal: string;
-  };
-  quantity: number;
 }
 
 const List: React.FC = () => {
@@ -88,7 +78,7 @@ const List: React.FC = () => {
     } catch (error: any) {
       openSnackbar(error.message as string, 'error');
     } finally {
-      setIsDialogOpen(false); // Close dialog after purchase
+      setIsDialogOpen(false);
     }
   };
 
