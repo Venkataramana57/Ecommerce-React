@@ -1,5 +1,4 @@
 import React, { useState, createContext, ReactNode, useCallback } from 'react';
-import { Snackbar, Alert } from '@mui/material';
 
 // Define the context type
 type AlertContextType = (message: string, severity?: 'success' | 'info' | 'error' | 'warning') => void;
@@ -35,17 +34,32 @@ const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
 
   return (
     <AlertContext.Provider value={openSnackbar}>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={closeSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert onClose={closeSnackbar} severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      {/* Snackbar */}
+      {snackbar.open && (
+        <div
+          className={`fixed top-5 left-1/2 transform -translate-x-1/2 px-4 py-3 rounded-lg shadow-lg text-white ${
+            snackbar.severity === 'success'
+              ? 'bg-green-500'
+              : snackbar.severity === 'error'
+              ? 'bg-red-500'
+              : snackbar.severity === 'warning'
+              ? 'bg-yellow-500'
+              : 'bg-blue-500'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <span>{snackbar.message}</span>
+            <button
+              onClick={closeSnackbar}
+              className="ml-4 text-white focus:outline-none hover:text-gray-300"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
 
+      {/* Render children */}
       {children}
     </AlertContext.Provider>
   );

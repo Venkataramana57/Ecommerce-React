@@ -28,7 +28,7 @@ const Form: React.FC<FormProps> = ({ product = null, handleSubmit, resetEditable
         description: product.description,
         price: product.price.$numberDecimal,
         quantity: product.quantity,
-        images: []  // Keep images empty for a new product or handle them for existing products
+        images: product.images
       });
     }
   }, [product]);
@@ -155,11 +155,19 @@ const Form: React.FC<FormProps> = ({ product = null, handleSubmit, resetEditable
             <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
               {formData.images.map((file: any, index) => (
                 <Box key={index} sx={{ marginRight: 2, marginBottom: 2 }}>
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt={`preview-${index}`}
-                    style={{ width: 100, height: 100, objectFit: 'cover' }}
-                  />
+                  {file instanceof File ? (
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Uploaded"
+                      style={{ width: '100px', height: '100px' }}
+                    />
+                  ) : (
+                    <img
+                      src={file}
+                      alt="URL"
+                      style={{ width: '100px', height: '100px' }}
+                    />
+                  )}
                 </Box>
               ))}
             </Box>

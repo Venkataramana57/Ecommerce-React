@@ -14,5 +14,5 @@ export interface FormData {
   description: string,
   price: string,
   quantity: number,
-  images: File[]
+  images: (File | string)[]
 }
